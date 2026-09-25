@@ -5,7 +5,9 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function Layout() {
-  const { currentUser, darkMode, toggleDarkMode, logout } = useApp();
+  const { auth, darkMode, toggleDarkMode, isConfigured } = useApp();
+  const currentUser = auth.profile;
+  const logout = auth.signOut;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const navigate = useNavigate();
