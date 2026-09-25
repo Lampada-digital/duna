@@ -12,6 +12,7 @@ import { AdminPanel } from './pages/AdminPanel';
 import { BookingConfirmation } from './pages/BookingConfirmation';
 import { Wishlists } from './pages/Wishlists';
 import { Loyalty } from './pages/Loyalty';
+import { SignIn, SignUp, ResetPassword } from './pages/Auth';
 
 export default function App() {
   return (
@@ -30,6 +31,9 @@ export default function App() {
             <Route path="/painel" element={<AdminPanel />} />
             <Route path="/favoritos" element={<Wishlists />} />
             <Route path="/fidelidade" element={<Loyalty />} />
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/parceiro/:code" element={<Home />} />
           </Route>
         </Routes>
