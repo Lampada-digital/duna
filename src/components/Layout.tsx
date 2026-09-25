@@ -5,9 +5,7 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function Layout() {
-  const { auth, darkMode, toggleDarkMode, isConfigured } = useApp();
-  const currentUser = auth.profile;
-  const logout = auth.signOut;
+  const { auth, darkMode, toggleDarkMode, isConfigured, currentUser, logout } = useApp();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const navigate = useNavigate();
@@ -102,8 +100,8 @@ export function Layout() {
                       {currentUser ? (
                         <>
                           <div className="px-4 py-3 border-b border-sand-100 dark:border-sand-700">
-                            <p className="text-sm font-semibold text-sand-900 dark:text-sand-100">{currentUser.name}</p>
-                            <p className="text-xs text-sand-500">{currentUser.email}</p>
+                            <p className="text-sm font-semibold text-sand-900 dark:text-sand-100">{currentUser?.name}</p>
+                            <p className="text-xs text-sand-500">{currentUser?.email}</p>
                           </div>
                           <div className="py-2">
                             {currentUser.role === 'guest' && (
@@ -119,7 +117,7 @@ export function Layout() {
                                 </Link>
                               </>
                             )}
-                            {(currentUser.role === 'realEstate' || currentUser.role === 'admin') && (
+                            {(currentUser?.role === 'realEstate' || currentUser?.role === 'admin') && (
                               <Link to="/painel" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-sand-700 dark:text-sand-300 hover:bg-sand-50 dark:hover:bg-sand-700">
                                 <Globe size={16} /> Painel da imobiliária
                               </Link>

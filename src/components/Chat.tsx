@@ -39,7 +39,7 @@ export function Chat({ bookingId, onClose }: ChatProps) {
     sendMessage(
       bookingId,
       currentUser.id,
-      currentUser.role === 'realEstate' ? 'host' : 'guest',
+      currentUser?.role === 'realEstate' ? 'host' : 'guest',
       newMessage.trim()
     );
     setNewMessage('');
