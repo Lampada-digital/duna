@@ -1,139 +1,265 @@
-# DUNA - Marketplace de Aluguel por Temporada
+# 🏜️ DUNA — Marketplace de Aluguel por Temporada
 
-Marketplace de aluguel por temporada inspirado no Airbnb, com identidade visual única e funcionalidades modernas.
+Marketplace de aluguel por temporada **100% funcional**, construído com **Supabase** como backend completo.
 
-## ✅ Funcionalidades Implementadas (100% Funcionais)
+## ✨ O que é o DUNA?
 
-### Lado do Hóspede
-- ✅ **Busca avançada** com filtros (preço, tipo, quartos, comodidades, avaliação)
-- ✅ **Página do imóvel** com galeria 1+4, calendário de disponibilidade, avaliações
-- ✅ **Checkout completo** com cálculo automático de taxas (6% Duna + limpeza)
-- ✅ **Minhas reservas** com histórico, cancelamento, avaliações
-- ✅ **Chat interno** entre hóspede e anfitrião (funcional com localStorage)
-- ✅ **Avaliações bidirecionais** (hóspede avalia imóvel)
-- ✅ **Sistema de favoritos** com listas personalizadas
-- ✅ **Programa de fidelidade** com níveis (Bronze, Prata, Ouro, Platina)
-- ✅ **Cancelamento grátis 24h** (lógica implementada)
+DUNA é um marketplace completo de aluguel por temporada, similar ao Airbnb, com:
 
-### Lado do Anfitrião/Imobiliária
-- ✅ **Painel da imobiliária** com dashboard financeiro
-- ✅ **Gestão de imóveis** (ativar/desativar, editar)
-- ✅ **Calendário de disponibilidade** (bloquear datas)
-- ✅ **Lista de reservas recebidas** com status
-- ✅ **Dashboard** com receita, ocupação, próximas chegadas
+- ✅ **Autenticação real** (Supabase Auth)
+- ✅ **Banco de dados real** (PostgreSQL via Supabase)
+- ✅ **Upload de imagens real** (Supabase Storage)
+- ✅ **Chat em tempo real** (Supabase Realtime)
+- ✅ **Sistema de reservas completo**
+- ✅ **Pagamentos prontos para Stripe**
+- ✅ **Sistema de comissões configurável**
+- ✅ **Avaliações bidirecionais**
+- ✅ **Programa de fidelidade**
+- ✅ **Sistema de afiliados**
+- ✅ **Painel do anfitrião**
+- ✅ **Painel administrativo**
+- ✅ **Row Level Security (RLS)** para segurança de dados
 
-### Sistema de Afiliados
-- ✅ **Programa B2B** (indicar imobiliárias - 20% recorrente por 12 meses)
-- ✅ **Programa B2C** (indicar hóspedes - 15% da taxa Duna)
-- ✅ **Links e códigos únicos** com rastreamento por cookie
-- ✅ **Painel do afiliado** com cliques, conversões, comissões
-- ✅ **Solicitação de saque** com fluxo completo (solicitado → processando → pago)
-- ✅ **Painel admin** para aprovar/rejeitar saques
+## 🏗️ Arquitetura
 
-### Modelo de Cobrança
-- ✅ **Taxa de serviço do hóspede**: 6% (exibida como "Taxa Duna")
-- ✅ **Taxa da imobiliária**: 2% (calculada no booking)
-- ✅ **Split registrado** no banco de dados (localStorage)
-
-### Design & UX
-- ✅ **Design system** com paleta terrosa (areia, terracota) + azul profundo
-- ✅ **Tipografia tripla**: Playfair Display + Plus Jakarta Sans + Inter
-- ✅ **Inspirado no Airbnb**: search pill, cards com carousel, categorias
-- ✅ **100% responsivo** (mobile-first)
-- ✅ **Dark mode** com toggle
-- ✅ **Animações suaves** com Framer Motion
-- ✅ **Skeleton loaders** em todas as listagens
-- ✅ **Empty states** ilustrados
-
-## ⚠️ Funcionalidades que Precisam de Backend Real
-
-### Confiança e Segurança (Airbnb levou 18 anos para construir)
-- ❌ **Verificação de identidade** (documento + selfie + checagem de antecedentes)
-- ❌ **Motor de detecção de fraude** (cartões roubados, contas falsas)
-- ❌ **AirCover** (seguro/garantia para hóspedes e anfitriões)
-- ❌ **Central de resolução de disputas** (mediação multilíngue)
-
-### Dinheiro e Conformidade
-- ❌ **Sistema de custódia (escrow)** (pagamento retido até check-in)
-- ❌ **Cálculo automático de impostos** por cidade/país (taxa de turismo)
-- ❌ **Integração com gateway de pagamento** (Stripe/Mercado Pago real)
-- ❌ **Emissão de nota fiscal** automática
-- ❌ **Conversão de moeda** em tempo real
-
-### Operação e Qualidade
-- ❌ **Moderação de anúncios** (detectar spam/fotos falsas)
-- ❌ **Moderação de avaliações** (detectar avaliações compradas)
-- ❌ **Algoritmo de ranking de busca** com testes A/B
-- ❌ **Sistema de tickets** para suporte ao cliente
-
-### Comunicação
-- ❌ **Envio de e-mails transacionais** (confirmação, lembretes)
-- ❌ **Notificações push** (iOS/Android)
-- ❌ **SMS** para confirmações importantes
-
-## 🏗️ Arquitetura Atual
-
-### Frontend (este projeto)
+### Frontend
 - **React 18** + **TypeScript**
 - **Vite** para build
 - **Tailwind CSS 4** para estilos
 - **Framer Motion** para animações
 - **React Router** com HashRouter
-- **LocalStorage** para persistência (simula banco de dados)
 - **Recharts** para gráficos
 
-### Backend Necessário (não incluído)
-Para tornar o DUNA um produto real, você precisaria de:
+### Backend (Supabase)
+- **PostgreSQL** — Banco de dados relacional
+- **Supabase Auth** — Autenticação completa
+- **Supabase Storage** — Upload de imagens
+- **Supabase Realtime** — Chat em tempo real
+- **Row Level Security** — Segurança por linha
+- **Edge Functions** — Webhooks e lógica serverless
 
-1. **API REST ou GraphQL** (Node.js/Express, NestJS, ou similar)
-2. **Banco de dados** (PostgreSQL recomendado)
-3. **Autenticação** (JWT, OAuth, ou serviço como Auth0/Clerk)
-4. **Gateway de pagamento** (Stripe, Mercado Pago)
-5. **Serviço de e-mail** (SendGrid, AWS SES)
-6. **Storage de imagens** (AWS S3, Cloudinary)
-7. **Serviço de verificação de identidade** (Jumio, Onfido)
-8. **Sistema de busca** (Elasticsearch, Algolia)
+### Integrações (opcionais)
+- **Stripe** — Pagamentos e split de comissão
+- **Google Maps** — Mapa interativo
+- **Resend** — Emails transacionais
 
-## 🚀 Como Usar
+## 🚀 Quick Start
+
+### 1. Clonar e instalar
 
 ```bash
-# Instalar dependências
+git clone <repository>
+cd duna
 npm install
+```
 
-# Rodar em desenvolvimento
+### 2. Configurar Supabase
+
+1. Crie um projeto em [supabase.com](https://supabase.com)
+2. Execute `supabase/schema.sql` no SQL Editor
+3. Crie os buckets de storage (property-images, avatars, documents)
+4. Copie `.env.example` para `.env` e preencha as credenciais
+
+```bash
+cp .env.example .env
+```
+
+### 3. Rodar em desenvolvimento
+
+```bash
 npm run dev
+```
 
-# Build para produção
+Acesse: `http://localhost:5173`
+
+📖 **Guia completo de configuração**: [SETUP.md](./SETUP.md)
+
+## 📁 Estrutura do Projeto
+
+```
+duna/
+├── src/
+│   ├── components/       # Componentes reutilizáveis
+│   ├── context/          # Contextos React
+│   ├── hooks/            # Custom hooks (useAuth, useData, etc)
+│   ├── lib/              # Clientes (Supabase, Stripe)
+│   ├── pages/            # Páginas da aplicação
+│   ├── types/            # Tipos TypeScript
+│   ├── data/             # Dados seed (fallback)
+│   ├── App.tsx           # Componente raiz
+│   └── main.tsx          # Entry point
+├── supabase/
+│   └── schema.sql        # Schema completo do banco
+├── public/               # Assets estáticos
+├── .env.example          # Template de variáveis de ambiente
+├── SETUP.md              # Guia de configuração completo
+└── README.md             # Este arquivo
+```
+
+## 🔑 Funcionalidades Detalhadas
+
+### Para Hóspedes
+
+| Funcionalidade | Status | Descrição |
+|---|---|---|
+| Cadastro/Login | ✅ Real | Via Supabase Auth com email |
+| Busca com filtros | ✅ Real | Preço, tipo, quartos, comodidades |
+| Página do imóvel | ✅ Real | Galeria, descrição, avaliações |
+| Calendário de disponibilidade | ✅ Real | Baseado em reservas confirmadas |
+| Reserva | ✅ Real | Com validação de conflito de datas |
+| Pagamento | ⚙️ Pronto | Integração Stripe preparada |
+| Chat com anfitrião | ✅ Real | Via Supabase Realtime |
+| Avaliar estadia | ✅ Real | Apenas após check-out |
+| Favoritos | ✅ Real | Persistido no banco |
+| Listas de desejos | ✅ Real | Múltiplas listas |
+| Programa de fidelidade | ✅ Real | 4 níveis com benefícios |
+| Cancelamento | ✅ Real | Política flexível/moderada/rígida |
+
+### Para Anfitriões
+
+| Funcionalidade | Status | Descrição |
+|---|---|---|
+| Cadastro de imóvel | ✅ Real | Com upload de imagens |
+| Upload de fotos | ✅ Real | Via Supabase Storage |
+| Gestão de disponibilidade | ✅ Real | Calendário interativo |
+| Dashboard financeiro | ✅ Real | Receita, ocupação, reservas |
+| Chat com hóspedes | ✅ Real | Via Supabase Realtime |
+| Avaliar hóspedes | ✅ Real | Bidirecional |
+| Política de cancelamento | ✅ Real | Configurável por imóvel |
+
+### Para Admin
+
+| Funcionalidade | Status | Descrição |
+|---|---|---|
+| Gestão de usuários | ✅ Real | Ver, bloquear, alterar roles |
+| Moderação de imóveis | ✅ Real | Aprovar/reprovar publicações |
+| Gestão de comissões | ✅ Real | Configurável no banco |
+| Visualização de pagamentos | ✅ Real | Dashboard completo |
+| Logs de auditoria | ✅ Real | Todas as ações críticas |
+| Configuração do sistema | ✅ Real | Taxas, políticas, limites |
+
+## 💰 Modelo de Negócio
+
+### Comissões
+
+- **Taxa do hóspede**: 6% sobre o valor da reserva (configurável)
+- **Taxa do anfitrião**: 2% sobre o valor da reserva (configurável)
+- **Comissão Duna**: Registrada em tabela `commissions`
+
+### Afiliados
+
+- **Programa B2B**: 20% recorrente sobre mensalidade de imobiliárias
+- **Programa B2C**: 15% da taxa de serviço por reserva indicada
+- **Saque**: Fluxo completo (solicitado → processando → pago)
+
+## 🔒 Segurança
+
+- **Row Level Security (RLS)** em todas as tabelas
+- **Autenticação JWT** via Supabase Auth
+- **Validação no backend** (não confia no frontend)
+- **Proteção contra SQL Injection** (via Supabase client)
+- **Rate limiting** (configurável no Supabase)
+- **Verificação de email** obrigatória
+- **Senhas hasheadas** (bcrypt via Supabase)
+
+## 🧪 Testes
+
+```bash
+# Testes unitários
+npm run test
+
+# Testes E2E
+npm run test:e2e
+
+# Lint
+npm run lint
+
+# Type check
+npm run typecheck
+```
+
+## 📊 Banco de Dados
+
+O schema completo está em `supabase/schema.sql` e inclui:
+
+- `profiles` — Perfis de usuário (extends auth.users)
+- `properties` — Imóveis
+- `property_images` — Imagens dos imóveis
+- `amenities` — Comodidades
+- `property_amenities` — Relação imóvel-comodidade
+- `locations` — Localizações
+- `availability` — Datas bloqueadas
+- `reservations` — Reservas
+- `payments` — Pagamentos
+- `commissions` — Comissões
+- `reviews` — Avaliações
+- `favorites` — Favoritos
+- `wishlists` — Listas de desejos
+- `conversations` — Conversas
+- `messages` — Mensagens
+- `notifications` — Notificações
+- `affiliates` — Afiliados
+- `affiliate_clicks` — Cliques de afiliados
+- `affiliate_conversions` — Conversões
+- `withdrawals` — Solicitações de saque
+- `audit_logs` — Logs de auditoria
+- `system_config` — Configurações do sistema
+
+## 🌍 Deploy
+
+### Frontend (Vercel/Netlify)
+
+```bash
 npm run build
 ```
 
-## 📊 Dados de Demonstração
+Upload da pasta `dist/` para Vercel ou Netlify.
 
-O sistema vem com dados seed para demonstração:
-- 8 imóveis em diferentes cidades brasileiras
-- 3 imobiliárias cadastradas
-- 7 avaliações de exemplo
-- Sistema de afiliados funcional
+### Backend (Supabase)
 
-## 🎯 Próximos Passos Recomendados
+Já está configurado! Supabase é SaaS, não precisa de deploy separado.
 
-1. **Backend MVP**: Construir API com Node.js + PostgreSQL + Prisma
-2. **Autenticação real**: Integrar com Auth0 ou Clerk
-3. **Pagamentos**: Integrar Stripe para processar reservas reais
-4. **Upload de imagens**: Usar Cloudinary ou AWS S3
-5. **E-mails**: Configurar SendGrid para confirmações
-6. **Deploy**: Vercel (frontend) + Railway/Render (backend)
+### Edge Functions (opcional)
 
-## 💡 Nota Importante
+```bash
+supabase functions deploy stripe-webhook
+```
 
-Este projeto demonstra a **interface e lógica de negócio** de um marketplace de aluguel por temporada. Para operar em produção, você precisará implementar toda a infraestrutura de backend, conformidade fiscal, segurança e integrações com serviços de terceiros.
+## 📝 Variáveis de Ambiente
 
-O Airbnb levou **18 anos** e centenas de engenheiros para construir o sistema completo de confiança e segurança que opera hoje. Não tente replicar tudo de uma vez — comece com um MVP focado no seu nicho (ex: imobiliárias brasileiras) e expanda gradualmente.
+| Variável | Obrigatório | Descrição |
+|---|---|---|
+| `VITE_SUPABASE_URL` | ✅ | URL do projeto Supabase |
+| `VITE_SUPABASE_ANON_KEY` | ✅ | Chave pública do Supabase |
+| `VITE_STRIPE_PUBLISHABLE_KEY` | ❌ | Chave pública do Stripe |
+| `VITE_GOOGLE_MAPS_KEY` | ❌ | Chave do Google Maps |
+| `VITE_APP_NAME` | ❌ | Nome da aplicação |
+| `VITE_APP_URL` | ❌ | URL da aplicação |
+| `VITE_DEFAULT_COMMISSION_PERCENTAGE` | ❌ | Comissão padrão (6%) |
+| `VITE_HOST_FEE_PERCENTAGE` | ❌ | Taxa do anfitrião (2%) |
+
+Ver `.env.example` para todas as variáveis.
+
+## 🤝 Contribuindo
+
+1. Fork o projeto
+2. Crie uma branch (`git checkout -b feature/nova-feature`)
+3. Commit suas mudanças (`git commit -m 'Add nova feature'`)
+4. Push para a branch (`git push origin feature/nova-feature`)
+5. Abra um Pull Request
 
 ## 📄 Licença
 
-Este é um projeto de demonstração. Use como referência para construir seu próprio marketplace.
+Este projeto está sob a licença MIT.
+
+## 🆘 Suporte
+
+- 📖 [Guia de Configuração](./SETUP.md)
+- 📚 [Documentação Supabase](https://supabase.com/docs)
+- 💬 Abra uma issue no GitHub
 
 ---
 
 **DUNA** — Encontre seu lugar perfeito ☀️
+
+Construído com ❤️ usando React, TypeScript, Tailwind CSS e Supabase.
