@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { Property, Booking, Review, User, RealEstate, Affiliate, AffiliateClick, AffiliateConversion, WithdrawalRequest, SearchFilters } from '../types';
+import { Property, Booking, Review, User, RealEstate, Affiliate, AffiliateClick, AffiliateConversion, WithdrawalRequest, SearchFilters, Message, HostReview, Wishlist, LoyaltyProgram } from '../types';
 import { seedProperties, seedRealEstates, seedReviews, seedUsers } from '../data/seed';
 
 interface AppState {
@@ -12,6 +12,10 @@ interface AppState {
   affiliateClicks: AffiliateClick[];
   affiliateConversions: AffiliateConversion[];
   withdrawals: WithdrawalRequest[];
+  messages: Message[];
+  hostReviews: HostReview[];
+  wishlists: Wishlist[];
+  loyalty: LoyaltyProgram | null;
   currentUser: User | null;
   darkMode: boolean;
   searchFilters: SearchFilters;
@@ -25,6 +29,7 @@ interface AppContextType extends AppState {
   createBooking: (booking: Omit<Booking, 'id' | 'createdAt'>) => Booking;
   cancelBooking: (bookingId: string) => void;
   addReview: (review: Omit<Review, 'id' | 'createdAt'>) => void;
+  addHostReview: (review: Omit<HostReview, 'id' | 'createdAt'>) => void;
   addProperty: (property: Omit<Property, 'id' | 'createdAt'>) => void;
   updateProperty: (id: string, updates: Partial<Property>) => void;
   blockDates: (propertyId: string, dates: string[]) => void;
@@ -35,6 +40,14 @@ interface AppContextType extends AppState {
   updateWithdrawalStatus: (id: string, status: WithdrawalRequest['status']) => void;
   getAffiliateByCode: (code: string) => Affiliate | undefined;
   getAffiliateStats: (affiliateId: string) => { clicks: number; conversions: number; pending: number; released: number; paid: number };
+  sendMessage: (bookingId: string, senderId: string, senderRole: 'guest' | 'host', content: string) => void;
+  getMessages: (bookingId: string) => Message[];
+  markMessagesAsRead: (bookingId: string, userId: string) => void;
+  createWishlist: (name: string) => Wishlist;
+  addToWishlist: (wishlistId: string, propertyId: string) => void;
+  removeFromWishlist: (wishlistId: string, propertyId: string) => void;
+  getUserWishlists: () => Wishlist[];
+  addLoyaltyPoints: (points: number) => void;
 }
 
 const defaultFilters: SearchFilters = {
@@ -66,6 +79,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [affiliateClicks, setAffiliateClicks] = useState<AffiliateClick[]>(() => loadState('affiliateClicks', []));
   const [affiliateConversions, setAffiliateConversions] = useState<AffiliateConversion[]>(() => loadState('affiliateConversions', []));
   const [withdrawals, setWithdrawals] = useState<WithdrawalRequest[]>(() => loadState('withdrawals', []));
+  const [messages, setMessages] = useState<Message[]>(() => loadState('messages', []));
+  const [hostReviews, setHostReviews] = useState<HostReview[]>(() => loadState('hostReviews', []));
+  const [wishlists, setWishlists] = useState<Wishlist[]>(() => loadState('wishlists', []));
+  const [loyalty, setLoyalty] = useState<LoyaltyProgram | null>(() => loadState('loyalty', null));
   const [currentUser, setCurrentUser] = useState<User | null>(() => loadState('currentUser', null));
   const [darkMode, setDarkMode] = useState(() => loadState('darkMode', false));
   const [searchFilters, setSearchFiltersState] = useState<SearchFilters>(() => loadState('searchFilters', defaultFilters));
@@ -77,6 +94,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => { saveState('affiliateClicks', affiliateClicks); }, [affiliateClicks]);
   useEffect(() => { saveState('affiliateConversions', affiliateConversions); }, [affiliateConversions]);
   useEffect(() => { saveState('withdrawals', withdrawals); }, [withdrawals]);
+  useEffect(() => { saveState('messages', messages); }, [messages]);
+  useEffect(() => { saveState('hostReviews', hostReviews); }, [hostReviews]);
+  useEffect(() => { saveState('wishlists', wishlists); }, [wishlists]);
+  useEffect(() => { saveState('loyalty', loyalty); }, [loyalty]);
   useEffect(() => { saveState('currentUser', currentUser); }, [currentUser]);
   useEffect(() => { saveState('darkMode', darkMode); }, [darkMode]);
   useEffect(() => { saveState('searchFilters', searchFilters); }, [searchFilters]);
@@ -191,13 +212,101 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return { clicks, conversions: conversions.length, pending, released, paid };
   }, [affiliateClicks, affiliateConversions]);
 
+  const addHostReview = useCallback((reviewData: Omit<HostReview, 'id' | 'createdAt'>) => {
+    const review: HostReview = { ...reviewData, id: `hr-${Date.now()}`, createdAt: new Date().toISOString() };
+    setHostReviews(prev => [...prev, review]);
+  }, []);
+
+  const sendMessage = useCallback((bookingId: string, senderId: string, senderRole: 'guest' | 'host', content: string) => {
+    const message: Message = {
+      id: `msg-${Date.now()}`,
+      bookingId,
+      senderId,
+      senderRole,
+      content,
+      timestamp: new Date().toISOString(),
+      read: false
+    };
+    setMessages(prev => [...prev, message]);
+  }, []);
+
+  const getMessages = useCallback((bookingId: string) => {
+    return messages.filter(m => m.bookingId === bookingId).sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+  }, [messages]);
+
+  const markMessagesAsRead = useCallback((bookingId: string, userId: string) => {
+    setMessages(prev => prev.map(m => 
+      m.bookingId === bookingId && m.senderId !== userId ? { ...m, read: true } : m
+    ));
+  }, []);
+
+  const createWishlist = useCallback((name: string) => {
+    const wishlist: Wishlist = {
+      id: `wl-${Date.now()}`,
+      userId: currentUser?.id || 'user-1',
+      name,
+      propertyIds: [],
+      createdAt: new Date().toISOString()
+    };
+    setWishlists(prev => [...prev, wishlist]);
+    return wishlist;
+  }, [currentUser]);
+
+  const addToWishlist = useCallback((wishlistId: string, propertyId: string) => {
+    setWishlists(prev => prev.map(wl => 
+      wl.id === wishlistId && !wl.propertyIds.includes(propertyId)
+        ? { ...wl, propertyIds: [...wl.propertyIds, propertyId] }
+        : wl
+    ));
+  }, []);
+
+  const removeFromWishlist = useCallback((wishlistId: string, propertyId: string) => {
+    setWishlists(prev => prev.map(wl => 
+      wl.id === wishlistId 
+        ? { ...wl, propertyIds: wl.propertyIds.filter(id => id !== propertyId) }
+        : wl
+    ));
+  }, []);
+
+  const getUserWishlists = useCallback(() => {
+    return wishlists.filter(wl => wl.userId === (currentUser?.id || 'user-1'));
+  }, [wishlists, currentUser]);
+
+  const addLoyaltyPoints = useCallback((points: number) => {
+    setLoyalty(prev => {
+      const current = prev || {
+        userId: currentUser?.id || 'user-1',
+        level: 'bronze' as const,
+        points: 0,
+        totalBookings: 0,
+        totalSpent: 0,
+        joinedAt: new Date().toISOString()
+      };
+      
+      const newPoints = current.points + points;
+      const newBookings = current.totalBookings + 1;
+      
+      // Calculate level based on points
+      let level: LoyaltyProgram['level'] = 'bronze';
+      if (newPoints >= 5000) level = 'platinum';
+      else if (newPoints >= 2000) level = 'gold';
+      else if (newPoints >= 500) level = 'silver';
+      
+      return { ...current, points: newPoints, totalBookings: newBookings, level };
+    });
+  }, [currentUser]);
+
   return (
     <AppContext.Provider value={{
       properties, bookings, reviews, users, realEstates, affiliates, affiliateClicks, affiliateConversions, withdrawals,
+      messages, hostReviews, wishlists, loyalty,
       currentUser, darkMode, searchFilters,
-      login, logout, toggleDarkMode, setSearchFilters, createBooking, cancelBooking, addReview,
+      login, logout, toggleDarkMode, setSearchFilters, createBooking, cancelBooking, addReview, addHostReview,
       addProperty, updateProperty, blockDates, registerAffiliate, recordAffiliateClick, recordConversion,
-      requestWithdrawal, updateWithdrawalStatus, getAffiliateByCode, getAffiliateStats
+      requestWithdrawal, updateWithdrawalStatus, getAffiliateByCode, getAffiliateStats,
+      sendMessage, getMessages, markMessagesAsRead,
+      createWishlist, addToWishlist, removeFromWishlist, getUserWishlists,
+      addLoyaltyPoints
     }}>
       {children}
     </AppContext.Provider>

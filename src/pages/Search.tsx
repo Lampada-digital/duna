@@ -1,8 +1,8 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import { PropertyCard, PropertyCardSkeleton } from '../components/PropertyCard';
 import { AMENITY_LABELS } from '../data/seed';
-import { Search as SearchIcon, SlidersHorizontal, X, MapPin, ArrowUpDown, Grid3X3, Map } from 'lucide-react';
+import { SlidersHorizontal, X, Search as SearchIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { EmptyState } from '../components/EmptyState';
 
@@ -10,21 +10,19 @@ export function Search() {
   const { properties, searchFilters, setSearchFilters } = useApp();
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
-  const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
   const [localFilters, setLocalFilters] = useState(searchFilters);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 600);
-    return () => clearTimeout(timer);
-  }, []);
+  useState(() => {
+    setTimeout(() => setLoading(false), 500);
+  });
 
   const filteredProperties = useMemo(() => {
     let result = properties.filter(p => p.isActive);
 
     if (localFilters.destination) {
       const dest = localFilters.destination.toLowerCase();
-      result = result.filter(p => 
-        p.city.toLowerCase().includes(dest) || 
+      result = result.filter(p =>
+        p.city.toLowerCase().includes(dest) ||
         p.neighborhood.toLowerCase().includes(dest) ||
         p.state.toLowerCase().includes(dest)
       );
@@ -39,7 +37,6 @@ export function Search() {
     }
     if (localFilters.guests > 1) result = result.filter(p => p.maxGuests >= localFilters.guests);
 
-    // Sort
     switch (localFilters.sortBy) {
       case 'price_asc': result.sort((a, b) => a.pricePerNight - b.pricePerNight); break;
       case 'price_desc': result.sort((a, b) => b.pricePerNight - a.pricePerNight); break;
@@ -69,37 +66,29 @@ export function Search() {
   ].filter(Boolean).length;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 animate-fade-in">
+    <div className="max-w-[1760px] mx-auto px-4 sm:px-6 lg:px-10 py-6 animate-fade-in">
       {/* Top bar */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="font-heading font-bold text-2xl text-sand-900 dark:text-sand-100">
-            {localFilters.destination ? `Imóveis em ${localFilters.destination}` : 'Todos os imóveis'}
+          <h1 className="font-display text-2xl md:text-3xl font-bold text-sand-900 dark:text-sand-50">
+            {localFilters.destination ? `${localFilters.destination}` : 'Todos os imóveis'}
           </h1>
-          <p className="text-sm text-sand-500 dark:text-sand-400 mt-1">{filteredProperties.length} resultados encontrados</p>
+          <p className="text-sm text-sand-500 dark:text-sand-400 mt-1">Mais de {filteredProperties.length} opções</p>
         </div>
-        <div className="flex items-center gap-3">
-          <button onClick={() => setShowFilters(!showFilters)} className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-sand-800 border border-sand-200 dark:border-sand-700 rounded-full text-sm font-medium text-sand-700 dark:text-sand-300 hover:border-terra-400 transition-colors">
+        <div className="flex items-center gap-2">
+          <button onClick={() => setShowFilters(!showFilters)} className={`flex items-center gap-2 px-4 py-2.5 border rounded-xl text-sm font-medium transition-all btn-press ${showFilters ? 'bg-sand-900 dark:bg-sand-100 text-white dark:text-sand-900 border-sand-900 dark:border-sand-100' : 'bg-white dark:bg-sand-800 border-sand-200 dark:border-sand-700 text-sand-700 dark:text-sand-300 hover:border-sand-900 dark:hover:border-sand-100'}`}>
             <SlidersHorizontal size={14} />
             Filtros
             {activeFilterCount > 0 && (
               <span className="w-5 h-5 bg-terra-500 text-white text-xs rounded-full flex items-center justify-center">{activeFilterCount}</span>
             )}
           </button>
-          <select value={localFilters.sortBy} onChange={(e) => setLocalFilters(f => ({ ...f, sortBy: e.target.value as any }))} className="px-3 py-2 bg-white dark:bg-sand-800 border border-sand-200 dark:border-sand-700 rounded-full text-sm text-sand-700 dark:text-sand-300 focus:outline-none focus:ring-2 focus:ring-terra-500/30">
-            <option value="relevance">Relevância</option>
+          <select value={localFilters.sortBy} onChange={(e) => setLocalFilters(f => ({ ...f, sortBy: e.target.value as any }))} className="px-4 py-2.5 bg-white dark:bg-sand-800 border border-sand-200 dark:border-sand-700 rounded-xl text-sm text-sand-700 dark:text-sand-300 focus:outline-none focus:ring-2 focus:ring-terra-500/30 font-medium">
+            <option value="relevance">Ordenar: Relevância</option>
             <option value="price_asc">Menor preço</option>
             <option value="price_desc">Maior preço</option>
-            <option value="rating">Mais avaliados</option>
+            <option value="rating">Melhor avaliação</option>
           </select>
-          <div className="hidden sm:flex items-center border border-sand-200 dark:border-sand-700 rounded-full overflow-hidden">
-            <button onClick={() => setViewMode('grid')} className={`p-2 ${viewMode === 'grid' ? 'bg-terra-500 text-white' : 'text-sand-500 hover:text-sand-700'}`}>
-              <Grid3X3 size={16} />
-            </button>
-            <button onClick={() => setViewMode('map')} className={`p-2 ${viewMode === 'map' ? 'bg-terra-500 text-white' : 'text-sand-500 hover:text-sand-700'}`}>
-              <Map size={16} />
-            </button>
-          </div>
         </div>
       </div>
 
@@ -107,38 +96,48 @@ export function Search() {
       <AnimatePresence>
         {showFilters && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden mb-6">
-            <div className="bg-white dark:bg-sand-800 rounded-2xl border border-sand-200 dark:border-sand-700 p-6">
+            <div className="bg-white dark:bg-sand-800 rounded-2xl border border-sand-200 dark:border-sand-700 p-6 md:p-8 card-shadow">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Price Range */}
                 <div>
-                  <label className="text-sm font-medium text-sand-700 dark:text-sand-300 mb-2 block">Faixa de preço</label>
+                  <label className="text-xs font-bold uppercase tracking-wider text-sand-500 mb-3 block">Preço por noite</label>
                   <div className="flex items-center gap-2">
-                    <input type="number" value={localFilters.priceMin} onChange={(e) => setLocalFilters(f => ({ ...f, priceMin: Number(e.target.value) }))} placeholder="Min" className="w-full px-3 py-2 bg-sand-50 dark:bg-sand-700 rounded-lg text-sm border border-sand-200 dark:border-sand-600 focus:outline-none focus:ring-2 focus:ring-terra-500/30" />
+                    <div className="flex-1">
+                      <input type="number" value={localFilters.priceMin || ''} onChange={(e) => setLocalFilters(f => ({ ...f, priceMin: Number(e.target.value) }))} placeholder="Min" className="w-full px-3 py-2.5 bg-sand-50 dark:bg-sand-700 rounded-xl text-sm border border-sand-200 dark:border-sand-600 focus:outline-none focus:ring-2 focus:ring-terra-500/30" />
+                    </div>
                     <span className="text-sand-400">—</span>
-                    <input type="number" value={localFilters.priceMax} onChange={(e) => setLocalFilters(f => ({ ...f, priceMax: Number(e.target.value) }))} placeholder="Max" className="w-full px-3 py-2 bg-sand-50 dark:bg-sand-700 rounded-lg text-sm border border-sand-200 dark:border-sand-600 focus:outline-none focus:ring-2 focus:ring-terra-500/30" />
+                    <div className="flex-1">
+                      <input type="number" value={localFilters.priceMax === 2000 ? '' : localFilters.priceMax} onChange={(e) => setLocalFilters(f => ({ ...f, priceMax: Number(e.target.value) || 2000 }))} placeholder="Max" className="w-full px-3 py-2.5 bg-sand-50 dark:bg-sand-700 rounded-xl text-sm border border-sand-200 dark:border-sand-600 focus:outline-none focus:ring-2 focus:ring-terra-500/30" />
+                    </div>
                   </div>
                 </div>
 
                 {/* Property Type */}
                 <div>
-                  <label className="text-sm font-medium text-sand-700 dark:text-sand-300 mb-2 block">Tipo de imóvel</label>
-                  <select value={localFilters.propertyType} onChange={(e) => setLocalFilters(f => ({ ...f, propertyType: e.target.value }))} className="w-full px-3 py-2 bg-sand-50 dark:bg-sand-700 rounded-lg text-sm border border-sand-200 dark:border-sand-600 focus:outline-none focus:ring-2 focus:ring-terra-500/30">
-                    <option value="">Todos</option>
-                    <option value="apartment">Apartamento</option>
-                    <option value="house">Casa</option>
-                    <option value="cabin">Cabana</option>
-                    <option value="studio">Studio</option>
-                    <option value="loft">Loft</option>
-                  </select>
+                  <label className="text-xs font-bold uppercase tracking-wider text-sand-500 mb-3 block">Tipo de imóvel</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[
+                      { value: '', label: 'Todos' },
+                      { value: 'apartment', label: 'Apto' },
+                      { value: 'house', label: 'Casa' },
+                      { value: 'cabin', label: 'Cabana' },
+                      { value: 'studio', label: 'Studio' },
+                      { value: 'loft', label: 'Loft' },
+                    ].map(t => (
+                      <button key={t.value} onClick={() => setLocalFilters(f => ({ ...f, propertyType: t.value }))} className={`py-2 rounded-xl text-xs font-medium transition-all ${localFilters.propertyType === t.value ? 'bg-sand-900 dark:bg-sand-100 text-white dark:text-sand-900' : 'bg-sand-50 dark:bg-sand-700 text-sand-600 dark:text-sand-400 hover:bg-sand-100 dark:hover:bg-sand-600'}`}>
+                        {t.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Bedrooms */}
                 <div>
-                  <label className="text-sm font-medium text-sand-700 dark:text-sand-300 mb-2 block">Quartos (mínimo)</label>
+                  <label className="text-xs font-bold uppercase tracking-wider text-sand-500 mb-3 block">Quartos</label>
                   <div className="flex gap-2">
                     {[0, 1, 2, 3, 4].map(n => (
-                      <button key={n} onClick={() => setLocalFilters(f => ({ ...f, bedrooms: n }))} className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${localFilters.bedrooms === n ? 'bg-terra-500 text-white' : 'bg-sand-50 dark:bg-sand-700 text-sand-600 dark:text-sand-400 hover:bg-sand-200 dark:hover:bg-sand-600'}`}>
-                        {n === 0 ? 'Any' : `${n}+`}
+                      <button key={n} onClick={() => setLocalFilters(f => ({ ...f, bedrooms: n }))} className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-all ${localFilters.bedrooms === n ? 'bg-sand-900 dark:bg-sand-100 text-white dark:text-sand-900' : 'bg-sand-50 dark:bg-sand-700 text-sand-600 dark:text-sand-400 hover:bg-sand-100 dark:hover:bg-sand-600'}`}>
+                        {n === 0 ? '✓' : `${n}+`}
                       </button>
                     ))}
                   </div>
@@ -146,11 +145,11 @@ export function Search() {
 
                 {/* Min Rating */}
                 <div>
-                  <label className="text-sm font-medium text-sand-700 dark:text-sand-300 mb-2 block">Avaliação mínima</label>
+                  <label className="text-xs font-bold uppercase tracking-wider text-sand-500 mb-3 block">Avaliação</label>
                   <div className="flex gap-2">
                     {[0, 4, 4.5, 4.8].map(n => (
-                      <button key={n} onClick={() => setLocalFilters(f => ({ ...f, minRating: n }))} className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${localFilters.minRating === n ? 'bg-terra-500 text-white' : 'bg-sand-50 dark:bg-sand-700 text-sand-600 dark:text-sand-400 hover:bg-sand-200 dark:hover:bg-sand-600'}`}>
-                        {n === 0 ? 'Todas' : `${n}+`}
+                      <button key={n} onClick={() => setLocalFilters(f => ({ ...f, minRating: n }))} className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-all ${localFilters.minRating === n ? 'bg-sand-900 dark:bg-sand-100 text-white dark:text-sand-900' : 'bg-sand-50 dark:bg-sand-700 text-sand-600 dark:text-sand-400 hover:bg-sand-100 dark:hover:bg-sand-600'}`}>
+                        {n === 0 ? '✓' : `${n}★`}
                       </button>
                     ))}
                   </div>
@@ -158,8 +157,8 @@ export function Search() {
               </div>
 
               {/* Amenities */}
-              <div className="mt-6">
-                <label className="text-sm font-medium text-sand-700 dark:text-sand-300 mb-3 block">Comodidades</label>
+              <div className="mt-6 pt-6 border-t border-sand-200 dark:border-sand-700">
+                <label className="text-xs font-bold uppercase tracking-wider text-sand-500 mb-3 block">Comodidades</label>
                 <div className="flex flex-wrap gap-2">
                   {Object.entries(AMENITY_LABELS).map(([key, label]) => (
                     <button
@@ -168,7 +167,7 @@ export function Search() {
                         ...f,
                         amenities: f.amenities.includes(key) ? f.amenities.filter(a => a !== key) : [...f.amenities, key]
                       }))}
-                      className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${localFilters.amenities.includes(key) ? 'bg-terra-500 text-white' : 'bg-sand-100 dark:bg-sand-700 text-sand-600 dark:text-sand-400 hover:bg-sand-200 dark:hover:bg-sand-600'}`}
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${localFilters.amenities.includes(key) ? 'bg-sand-900 dark:bg-sand-100 text-white dark:text-sand-900' : 'bg-sand-50 dark:bg-sand-700 text-sand-600 dark:text-sand-400 hover:bg-sand-100 dark:hover:bg-sand-600 border border-sand-200 dark:border-sand-600'}`}
                     >
                       {label}
                     </button>
@@ -177,12 +176,12 @@ export function Search() {
               </div>
 
               {/* Filter actions */}
-              <div className="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-sand-200 dark:border-sand-700">
-                <button onClick={clearFilters} className="px-4 py-2 text-sm font-medium text-sand-600 dark:text-sand-400 hover:text-sand-800 dark:hover:text-sand-200 transition-colors">
-                  Limpar filtros
+              <div className="flex items-center justify-end gap-3 mt-6 pt-6 border-t border-sand-200 dark:border-sand-700">
+                <button onClick={clearFilters} className="px-5 py-2.5 text-sm font-semibold underline text-sand-700 dark:text-sand-300 hover:text-sand-900 dark:hover:text-sand-100 transition-colors">
+                  Limpar tudo
                 </button>
-                <button onClick={applyFilters} className="px-6 py-2 bg-terra-500 hover:bg-terra-600 text-white text-sm font-medium rounded-full transition-colors">
-                  Aplicar filtros
+                <button onClick={applyFilters} className="px-6 py-2.5 bg-sand-900 dark:bg-sand-100 hover:bg-sand-800 dark:hover:bg-sand-200 text-white dark:text-sand-900 text-sm font-semibold rounded-xl transition-colors btn-press">
+                  Mostrar {filteredProperties.length} imóveis
                 </button>
               </div>
             </div>
@@ -190,47 +189,23 @@ export function Search() {
         )}
       </AnimatePresence>
 
-      {/* Results */}
-      {viewMode === 'grid' ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {loading ? (
-            Array.from({ length: 6 }).map((_, i) => <PropertyCardSkeleton key={i} />)
-          ) : filteredProperties.length > 0 ? (
-            filteredProperties.map((p, i) => <PropertyCard key={p.id} property={p} index={i} />)
-          ) : (
-            <div className="col-span-full">
-              <EmptyState
-                icon={SearchIcon}
-                title="Nenhum imóvel encontrado"
-                description="Tente ajustar os filtros ou buscar por outro destino."
-                action={{ label: 'Limpar filtros', onClick: clearFilters }}
-              />
-            </div>
-          )}
-        </div>
-      ) : (
-        /* Map View */
-        <div className="bg-white dark:bg-sand-800 rounded-2xl border border-sand-200 dark:border-sand-700 overflow-hidden">
-          <div className="relative h-[600px] bg-sand-200 dark:bg-sand-700">
-            {/* Simple map representation */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center">
-                <MapPin size={48} className="mx-auto text-terra-500 mb-4" />
-                <p className="text-sand-600 dark:text-sand-400 font-medium">Mapa interativo</p>
-                <p className="text-sm text-sand-500 mt-2">{filteredProperties.length} imóveis nesta área</p>
-                <div className="mt-4 grid grid-cols-2 gap-3 max-w-md mx-auto">
-                  {filteredProperties.slice(0, 4).map(p => (
-                    <div key={p.id} className="bg-white dark:bg-sand-800 rounded-lg p-3 shadow-sm border border-sand-200 dark:border-sand-700">
-                      <p className="text-xs font-medium text-sand-800 dark:text-sand-200 truncate">{p.title}</p>
-                      <p className="text-xs text-terra-600 font-bold mt-1">R$ {p.pricePerNight}/noite</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+      {/* Results Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-6 gap-y-10">
+        {loading ? (
+          Array.from({ length: 10 }).map((_, i) => <PropertyCardSkeleton key={i} />)
+        ) : filteredProperties.length > 0 ? (
+          filteredProperties.map((p, i) => <PropertyCard key={p.id} property={p} index={i} />)
+        ) : (
+          <div className="col-span-full">
+            <EmptyState
+              icon={SearchIcon}
+              title="Nenhum imóvel encontrado"
+              description="Tente ajustar os filtros ou buscar por outro destino."
+              action={{ label: 'Limpar filtros', onClick: clearFilters }}
+            />
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

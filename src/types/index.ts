@@ -122,3 +122,40 @@ export interface SearchFilters {
   minRating: number;
   sortBy: 'relevance' | 'price_asc' | 'price_desc' | 'rating';
 }
+
+export interface Message {
+  id: string;
+  bookingId: string;
+  senderId: string;
+  senderRole: 'guest' | 'host';
+  content: string;
+  timestamp: string;
+  read: boolean;
+}
+
+export interface HostReview {
+  id: string;
+  bookingId: string;
+  guestId: string;
+  hostId: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
+}
+
+export interface Wishlist {
+  id: string;
+  userId: string;
+  name: string;
+  propertyIds: string[];
+  createdAt: string;
+}
+
+export interface LoyaltyProgram {
+  userId: string;
+  level: 'bronze' | 'silver' | 'gold' | 'platinum';
+  points: number;
+  totalBookings: number;
+  totalSpent: number;
+  joinedAt: string;
+}
