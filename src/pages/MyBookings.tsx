@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { Calendar, MapPin, Star, XCircle, CheckCircle } from 'lucide-react';
+import { Calendar, MapPin, Star, XCircle, CheckCircle, MessageCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { format, parseISO, isAfter, isBefore } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { EmptyState } from '../components/EmptyState';
+import { Chat } from '../components/Chat';
 
 export function MyBookings() {
   const { bookings, properties, currentUser, cancelBooking, addReview, login, reviews } = useApp();
@@ -14,6 +15,7 @@ export function MyBookings() {
   const [reviewModal, setReviewModal] = useState<string | null>(null);
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewComment, setReviewComment] = useState('');
+  const [chatBookingId, setChatBookingId] = useState<string | null>(null);
 
   if (!currentUser) {
     login('demo@duna.com', 'guest');
@@ -126,6 +128,9 @@ export function MyBookings() {
                       {hasReview && (
                         <span className="text-xs text-green-600 flex items-center gap-1.5 font-medium"><CheckCircle size={14} /> Avaliado</span>
                       )}
+                      <button onClick={() => setChatBookingId(booking.id)} className="px-3 py-2 text-xs font-semibold text-duna-600 dark:text-duna-400 hover:bg-duna-50 dark:hover:bg-duna-900/20 rounded-lg transition-colors flex items-center gap-1.5">
+                        <MessageCircle size={14} /> Chat
+                      </button>
                       <button onClick={() => navigate(`/imovel/${property.id}`)} className="ml-auto px-3 py-2 text-xs font-semibold text-sand-700 dark:text-sand-300 hover:bg-sand-100 dark:hover:bg-sand-700 rounded-lg transition-colors">
                         Ver imóvel →
                       </button>
@@ -163,6 +168,11 @@ export function MyBookings() {
             </div>
           </motion.div>
         </div>
+      )}
+
+      {/* Chat */}
+      {chatBookingId && (
+        <Chat bookingId={chatBookingId} onClose={() => setChatBookingId(null)} />
       )}
     </div>
   );
