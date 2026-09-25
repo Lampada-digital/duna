@@ -10,6 +10,8 @@ import { AffiliateProgram } from './pages/AffiliateProgram';
 import { AffiliateDashboard } from './pages/AffiliateDashboard';
 import { AdminPanel } from './pages/AdminPanel';
 import { BookingConfirmation } from './pages/BookingConfirmation';
+import { Wishlists } from './pages/Wishlists';
+import { Loyalty } from './pages/Loyalty';
 
 export default function App() {
   return (
@@ -26,6 +28,8 @@ export default function App() {
             <Route path="/afiliados" element={<AffiliateProgram />} />
             <Route path="/afiliados/painel" element={<AffiliateDashboard />} />
             <Route path="/painel" element={<AdminPanel />} />
+            <Route path="/favoritos" element={<Wishlists />} />
+            <Route path="/fidelidade" element={<Loyalty />} />
             <Route path="/parceiro/:code" element={<Home />} />
           </Route>
         </Routes>

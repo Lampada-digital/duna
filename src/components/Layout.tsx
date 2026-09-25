@@ -105,9 +105,17 @@ export function Layout() {
                           </div>
                           <div className="py-2">
                             {currentUser.role === 'guest' && (
-                              <Link to="/minhas-reservas" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-sand-700 dark:text-sand-300 hover:bg-sand-50 dark:hover:bg-sand-700">
-                                <Heart size={16} /> Minhas reservas
-                              </Link>
+                              <>
+                                <Link to="/minhas-reservas" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-sand-700 dark:text-sand-300 hover:bg-sand-50 dark:hover:bg-sand-700">
+                                  <Heart size={16} /> Minhas reservas
+                                </Link>
+                                <Link to="/favoritos" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-sand-700 dark:text-sand-300 hover:bg-sand-50 dark:hover:bg-sand-700">
+                                  <Heart size={16} /> Favoritos
+                                </Link>
+                                <Link to="/fidelidade" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-sand-700 dark:text-sand-300 hover:bg-sand-50 dark:hover:bg-sand-700">
+                                  <User size={16} /> Fidelidade
+                                </Link>
+                              </>
                             )}
                             {(currentUser.role === 'realEstate' || currentUser.role === 'admin') && (
                               <Link to="/painel" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-sand-700 dark:text-sand-300 hover:bg-sand-50 dark:hover:bg-sand-700">
